@@ -25,7 +25,7 @@ class FetchArticles extends Command
      * Execute the console command.
      */
     public function handle()
-    {
+    {   
         $this->fetchFromNewsAPI();
         $this->fetchFromGuardianAPI();
         $this->fetchFromNYTimesAPI();
@@ -33,7 +33,7 @@ class FetchArticles extends Command
     }
     // Fetch From News API
     protected function fetchFromNewsAPI()
-    {
+    {   
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
             'apiKey' => config('services.news_api.key'),
             'country' => 'us',
@@ -44,17 +44,28 @@ class FetchArticles extends Command
         $articles = $response->json()['articles'] ?? [];
 
         foreach ($articles as $article) {
+            // Assuming $article is the API response
+            $publishedAt = $article['publishedAt'];
+
+            // Convert ISO 8601 format to MySQL datetime format
+            $publishedAt = str_replace(['T', 'Z'], [' ', ''], $publishedAt);
+            $content = $article['description'];
+
+            if ($content === null || $content === '') {
+                continue; // Skip this article
+            }
             Article::updateOrCreate(
                 ['title' => $article['title']],
                 [
-                    'content' => $article['description'],
+                    'content' => $content,
                     'author' => $article['author'],
                     'category' => 'Technology',
                     'source' => $article['source']['name'],
-                    'published_at' => $article['publishedAt'],
+                    'published_at' => $publishedAt,
                 ]
             );
         }
+
     }
 
     protected function fetchFromGuardianAPI()
@@ -104,4 +115,4 @@ class FetchArticles extends Command
         }
     }
 }
-}
+
