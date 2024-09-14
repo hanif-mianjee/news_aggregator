@@ -31,7 +31,7 @@ class FetchArticles extends Command
         $this->fetchFromNYTimesAPI();
         $this->info('Articles fetched successfully!');
     }
-
+    // Fetch From News API
     protected function fetchFromNewsAPI()
     {
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
