@@ -30,7 +30,7 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    
+
     'news_api' => [
         'key' => env('NEWS_API_KEY'),
     ],
@@ -40,5 +40,9 @@ return [
     'nytimes_api' => [
         'key' => env('NYTIMES_API_KEY'),
     ],
+    'core_signal' => [
+        'key' => env('CORESIGNAL_API_KEY'),
+        'coresignal_base_url' => env(('CORE_SIGNAL_BASEURL'))
+    ]
 
 ];

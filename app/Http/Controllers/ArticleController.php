@@ -17,7 +17,7 @@ class ArticleController extends Controller
     public function search(Request $request)
     {   
         // Search parameters from the request
-
+        
         $keyword = $request->input('keyword');
         $category = $request->input('category');
         $source = $request->input('source');
