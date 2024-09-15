@@ -7,8 +7,23 @@ use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/articles",
+     *     tags={"Articles"},
+     *     summary="Get all articles with pagination",
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of articles",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Article")
+     *         )
+     *     )
+     * )
+     */
     public function index()
-    {
+    {   
         // Fetch all articles with pagination (10 articles per page)
         $articles = Article::paginate(10);
         return response()->json($articles, 200);
