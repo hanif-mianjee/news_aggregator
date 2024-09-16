@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Article;
 use App\Models\UserPreference;
 use Illuminate\Support\Facades\Auth;
 class ArticleControllerTest extends TestCase
@@ -69,5 +70,23 @@ class ArticleControllerTest extends TestCase
         // Check the response
         $response->assertStatus(200)
                 ->assertJsonStructure(['sources', 'categories', 'authors']);
-        }
+    }
+
+    public function test_get_personalized_news_feed()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        UserPreference::factory()->create(['user_id' => $user->id, 'sources' => json_encode(['The Guardian'])]);
+
+        // Create articles
+        Article::factory()->create(['source' => 'The Guardian']);
+        Article::factory()->create(['source' => 'Some Other Source']);
+
+        // Send a GET request
+        $response = $this->getJson('/api/user/news-feed');
+
+        // Check the response
+        $response->assertStatus(200)
+             ->assertJsonCount(1); // Assuming only one article from The Guardian is created
+    }
 }

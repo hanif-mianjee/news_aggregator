@@ -102,7 +102,7 @@ class UserPreferenceController extends Controller
         $user = Auth::user();
 
         // Find the user's preferences
-        $preferences = UserPreference::where('user_id', $user->id)->first();
+        $preferences = UserPreference::where('user_id', $user->id)->get();
 
         return response()->json($preferences, 200);
     }
