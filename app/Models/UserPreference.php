@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserPreference extends Model
 {
+    use HasFactory;
     protected $fillable = ['user_id', 'sources', 'categories', 'authors'];
 
     // Specify that these fields are JSON
@@ -21,8 +22,5 @@ class UserPreference extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function preference()
-    {
-        return $this->hasOne(UserPreference::class);
-    }
+    
 }
