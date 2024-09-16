@@ -17,6 +17,21 @@ use Illuminate\Routing\Controller as BaseController;
  *     description="API Server"
  * )
  */
+    /**
+     * @OA\Info(
+     *    title="API Documentation",
+     *    version="1.0.0",
+     * )
+     *
+     * @OA\SecurityScheme(
+     *    securityScheme="sanctum",
+     *    type="http",
+     *    scheme="bearer",
+     *    bearerFormat="JWT",
+     *    name="Authorization",
+     *    in="header"
+     * )
+     */
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;

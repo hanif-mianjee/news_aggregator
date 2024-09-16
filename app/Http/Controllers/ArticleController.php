@@ -29,6 +29,60 @@ class ArticleController extends Controller
         return response()->json($articles, 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/articles/search",
+     *     summary="Search for articles",
+     *     tags={"Articles"},
+     *     @OA\Parameter(
+     *         name="keyword",
+     *         in="query",
+     *         required=false, 
+     *         description="Keyword to search in title or content",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         required=false, 
+     *         description="Filter by category",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="source",
+     *         in="query",
+     *         required=false, 
+     *         description="Filter by source",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         required=false, 
+     *         description="Start date for filtering articles (format: YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         required=false, 
+     *         description="End date for filtering articles (format: YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful search results",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Article"))
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No articles found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No articles found.")
+     *         )
+     *     )
+     * )
+     */
     public function search(Request $request)
     {   
         // Search parameters from the request
@@ -69,6 +123,32 @@ class ArticleController extends Controller
         return response()->json($articles, 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/articles/{id}",
+     *     summary="Retrieve an article by ID",
+     *     tags={"Articles"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the article to retrieve",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful retrieval of the article",
+     *         @OA\JsonContent(ref="#/components/schemas/Article") 
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Article not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Article not found")
+     *         )
+     *     )
+     * )
+     */
     public function show($id)
     {   
         try {
@@ -82,6 +162,49 @@ class ArticleController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/user/news-feed",
+     *     summary="Get personalized news feed",
+     *     tags={"User Preferences"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response with personalized articles",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="title", type="string", example="Article Title"),
+     *                     @OA\Property(property="source", type="string", example="The Guardian"),
+     *                     @OA\Property(property="category", type="string", example="Technology"),
+     *                     @OA\Property(property="author", type="string", example="John Doe"),
+     *                     @OA\Property(property="published_at", type="string", format="date-time", example="2024-09-16T12:00:00Z"),
+     *                 )
+     *             ),
+     *             @OA\Property(property="total", type="integer", example=100),
+     *             @OA\Property(property="per_page", type="integer", example=10),
+     *             @OA\Property(property="last_page", type="integer", example=10)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No articles found for the user's preferences",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No articles found.")
+     *         )
+     *     )
+     * )
+     */
     public function getPersonalizedNewsFeed()
     {   
         // Get the authenticated user and their preferences

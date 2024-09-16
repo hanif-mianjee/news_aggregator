@@ -5,8 +5,36 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserPreference;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Annotations as OA;
+
 class UserPreferenceController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/user/preferences",
+     *     summary="Set user preferences",
+     *     description="Requires Bearer token authorization",
+     *     tags={"User Preferences"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="sources", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="categories", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="authors", type="array", @OA\Items(type="string"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Preferences updated successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     */
     // Set user preferences
     public function setPreferences(Request $request)
     {   
@@ -42,6 +70,32 @@ class UserPreferenceController extends Controller
     }
 
     // Get user preferences
+    /**
+     * @OA\Get(
+     *     path="/api/user/preferences",
+     *     summary="Get User Preferences",
+     *     tags={"User Preferences"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User preferences retrieved successfully.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="sources", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="categories", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="authors", type="array", @OA\Items(type="string")),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized. User is not authenticated."
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Preferences not found."
+     *     ),
+     * )
+     */
     public function getPreferences()
     {   
         // Get the authenticated user

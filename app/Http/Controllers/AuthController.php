@@ -9,6 +9,22 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     /**
+     * @OA\Info(
+     *    title="API Documentation",
+     *    version="1.0.0",
+     * )
+     *
+     * @OA\SecurityScheme(
+     *    securityScheme="sanctum",
+     *    type="http",
+     *    scheme="bearer",
+     *    bearerFormat="JWT",
+     *    name="Authorization",
+     *    description="Use Bearer {token} format to authenticate"
+     * )
+     */
+
+    /**
      * @OA\Post(
      *     path="/api/register",
      *     tags={"Authentication"},
