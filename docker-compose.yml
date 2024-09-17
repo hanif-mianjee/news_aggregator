@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    expose:
+      - "9000"
+    environment:
+      - PHP_FPM_PORT=9000
+    depends_on:
+      - mysql
+    command: >
+      sh -c "
+        chown -R www-data:www-data /var/www/.npm &&
+        composer install &&
+        npm install &&
+        php artisan key:generate &&
+        php artisan migrate &&
+        php artisan db:seed &&
+        php-fpm
+      "
+
+  webserver:
+    image: nginx:alpine
+    container_name: nginx_web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+    driver: local
